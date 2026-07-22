@@ -19,6 +19,8 @@ def extract_pages(input_pdf, output_pdf, start_page, end_page):
 
 if __name__ == "__main__":
     handbook = "data/handbooks/handbook_2024_2025.pdf"
+    extract_pages(handbook, "data/policy_notices/section1_admissions_policy.pdf", 15, 22)
+    extract_pages(handbook, "data/faculty_sections/arts_stream.pdf", 39, 50)
 
     # Verified against the actual PDF's table of contents and page content.
     extract_pages(handbook, "data/faculty_sections/management.pdf", 51, 56)
