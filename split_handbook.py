@@ -30,3 +30,9 @@ if __name__ == "__main__":
     # Bonus: Section 9 of the handbook already contains the previous
     # year's Z-score cut-off marks.
     extract_pages(handbook, "data/zscore_reports/zscore_cutoffs_2024_2025_handbook.pdf", 196, 205)
+    # Second year of Z-score data, from the 2025/2026 handbook's own
+    # Section 9 (based on the 2024 A/L exam — one year ahead of the
+    # cutoffs already extracted from the 2024/2025 handbook).
+    handbook_2026 = "data/handbooks/handbook_2025_2026.pdf"
+    extract_pages(handbook_2026, "data/zscore_reports/zscore_cutoffs_2025_2026_handbook.pdf", 180, 190)
+    
