@@ -51,7 +51,7 @@ def build_retriever():
         persist_directory="chroma_db"
     )
 
-    return vectordb.as_retriever(search_kwargs={"k": 3})
+    return vectordb.as_retriever(search_kwargs={"k": 6})
 
 
 @st.cache_resource(show_spinner=False)
