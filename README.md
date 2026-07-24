@@ -169,7 +169,7 @@ All features were merged into main via Pull Requests. Commit messages strictly a
 
 Live Streamlit Demo
 
-Live Application URL: https://ugc-admission-explainer-zddzrkf9bnjqk4qvb5eusa.streamlit.ap
+Live Application URL: https://ugc-admission-explainer-zddzrkf9bnjqk4qvb5eusa.streamlit.app/
 
 Known Limitations
 
