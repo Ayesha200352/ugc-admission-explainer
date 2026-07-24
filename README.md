@@ -300,61 +300,33 @@ Agent Communication Diagram
 
 
 User Question
-
        |
-
        v
-
 Router Agent
-
 (Groq Llama 3.1)
-
        |
-
        v
-
 Question Category Detection
-
        |
-
        v
-
 Retriever
-
 (ChromaDB)
-
-       |
-
-       v
-
+      |
+      v
 Relevant Document Retrieval
-
        |
-
        v
-
 Retrieval and Synthesis Agent
-
 (Claude Sonnet 4.5)
-
        |
-
        v
-
 Answer Generation
-
        |
-
        v
-
 Reflection Agent
-
-(Groq)
-
+    (Groq)
        |
-
        v
-
 Final Validated Answer
 
 
