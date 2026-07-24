@@ -1,426 +1,677 @@
-# 🎓 UGC Admission & Z-Score Eligibility Explainer
+UGC Admission & Z-Score Eligibility Explainer
 
-An Agentic AI application built with **Streamlit**, **LangChain**, **ChromaDB**, **Hugging Face Embeddings**, **Groq Llama 3.1**, and **Claude Sonnet 4.5 (via OpenRouter)** to help Sri Lankan G.C.E. Advanced Level students understand university admission eligibility, Z-score cut-offs, district quotas, and UGC admission policies.
 
-The application uses a **Retrieval-Augmented Generation (RAG)** pipeline with multiple AI agents to retrieve accurate information from official University Grants Commission (UGC) documents before generating responses.
+Project Description
 
----
+UGC Admission & Z-Score Eligibility Explainer is an Agentic AI application developed to help Sri Lankan G.C.E. Advanced Level students understand university admission eligibility requirements, Z-score cut-offs, district quota systems, and UGC admission policies.
 
-# 📖 Project Description
+The system uses Retrieval-Augmented Generation (RAG) with multiple AI agents to provide accurate answers based on official University Grants Commission (UGC) documents.
 
-The UGC Admission & Z-Score Eligibility Explainer is an Agentic AI system designed to answer questions related to Sri Lankan university admissions.
+Instead of relying only on the internal knowledge of Large Language Models, this application retrieves information from official UGC documents and uses that information to generate reliable, context-based responses.
 
-Instead of relying solely on an LLM's internal knowledge, the application searches official UGC documents including:
+The system uses the following document sources:
 
-- Faculty admission requirements
-- District quota policies
-- Annual Z-score reports
-- Official UGC notices
+- UGC Admission Handbooks
+- Faculty Admission Requirements
+- Z-score Reports
+- Policy Notices
 
-The retrieved information is then used by an LLM to generate reliable answers grounded in official documents.
-
-Example questions include:
+Example questions:
 
 - What subjects are required for Engineering?
 - Explain the district quota system.
-- What is the Z-score for Medicine in Colombo?
+- What is the Z-score requirement for Medicine?
 - Can Bio Science students apply for Agriculture?
-- What are the admission requirements for Computer Science?
+- What are the requirements for Computer Science?
 
----
 
-# 🏗️ System Architecture
+System Architecture Diagram
 
-```
-                User
-                  │
-                  ▼
-        Streamlit Web Interface
-                  │
-                  ▼
-          Router Agent (Groq)
-                  │
-        Classifies the question
-                  │
-                  ▼
-         Chroma Vector Database
-                  │
-       Semantic Similarity Search
-                  │
-                  ▼
-    Retrieved UGC Document Chunks
-                  │
-                  ▼
- Retrieval + Synthesis Agent (Claude)
-                  │
-      Generates grounded response
-                  │
-                  ▼
-      Reflection Agent (Groq)
-                  │
- Verifies answer against retrieved context
-                  │
-                  ▼
-            Final Answer
-```
 
----
+User
 
-# 🛠 Technology Stack
+  |
 
-| Component | Technology |
-|------------|------------|
-| Frontend | Streamlit |
-| Programming Language | Python |
-| LLM Router | Llama 3.1 8B Instant (Groq) |
-| Answer Generation | Claude Sonnet 4.5 (OpenRouter) |
-| Embedding Model | sentence-transformers/all-MiniLM-L6-v2 |
-| Vector Database | ChromaDB |
-| Framework | LangChain |
-| Document Loader | PyPDFLoader |
+  v
 
----
+Streamlit Web Interface
 
-# 📂 Project Structure
+  |
 
-```
-ugc-admission-explainer/
+  v
 
-│
-├── app.py
-├── requirements.txt
-├── README.md
-│
-├── chroma_db/
-│
-├── data/
-│   ├── faculty_sections/
-│   ├── zscore_reports/
-│   ├── policy_notices/
-│
-└── .streamlit/
-    └── secrets.toml
-```
+Router Agent
 
----
+(Groq Llama 3.1)
 
-# ⚙️ Setup Instructions
+  |
 
-## 1. Clone Repository
+  v
 
-```bash
-git clone https://github.com/YOUR_USERNAME/ugc-admission-explainer.git
+Question Classification
+
+  |
+
+  v
+
+ChromaDB Vector Database
+
+  |
+
+  v
+
+Semantic Similarity Search
+
+  |
+
+  v
+
+Retrieved UGC Document Chunks
+
+  |
+
+  v
+
+Retrieval and Synthesis Agent
+
+(Claude Sonnet 4.5)
+
+  |
+
+  v
+
+Generated Answer
+
+  |
+
+  v
+
+Reflection Agent
+
+(Groq Llama 3.1)
+
+  |
+
+  v
+
+Validated Final Response
+
+
+
+Technology Stack
+
+
+Component                     Technology
+
+Programming Language          Python
+
+Frontend                      Streamlit
+
+AI Framework                  LangChain
+
+Router Model                  Llama 3.1 8B Instant (Groq)
+
+Answer Generation Model       Claude Sonnet 4.5 (OpenRouter)
+
+Embedding Model               sentence-transformers/all-MiniLM-L6-v2
+
+Vector Database               ChromaDB
+
+Document Processing           PyPDFLoader
+
+Text Splitting                RecursiveCharacterTextSplitter
+
+
+
+Project Structure
+
+
+ugc-admission-explainer
+
+|
+
+|-- app.py
+
+|-- requirements.txt
+
+|-- README.md
+
+|
+
+|-- data
+
+|   |
+
+|   |-- faculty_sections
+
+|   |
+
+|   |-- zscore_reports
+
+|   |
+
+|   |-- policy_notices
+
+|
+
+|-- chroma_db
+
+|
+
+|-- .streamlit
+
+    |
+
+    |-- secrets.toml
+
+
+
+Setup Instructions
+
+
+1. Clone Repository
+
+
+git clone https://github.com/Ayesha200352/ugc-admission-explainer.git
 
 cd ugc-admission-explainer
-```
 
----
 
-## 2. Create Virtual Environment
 
-Windows
+2. Create Virtual Environment
 
-```bash
+
+Windows:
+
 python -m venv venv
 
 venv\Scripts\activate
-```
 
-Mac/Linux
 
-```bash
+Linux/Mac:
+
 python3 -m venv venv
 
 source venv/bin/activate
-```
 
----
 
-## 3. Install Dependencies
 
-```bash
+3. Install Dependencies
+
+
 pip install -r requirements.txt
-```
 
----
 
-## 4. Configure API Keys
 
-Create
+4. Configure API Keys
 
-```
+
+Create the file:
+
+
 .streamlit/secrets.toml
-```
 
-Add
 
-```toml
-GROQ_API_KEY="YOUR_GROQ_KEY"
+Add your API keys:
 
-OPENROUTER_API_KEY="YOUR_OPENROUTER_KEY"
-```
 
----
+GROQ_API_KEY="YOUR_GROQ_API_KEY"
 
-## 5. Add PDF Documents
+OPENROUTER_API_KEY="YOUR_OPENROUTER_API_KEY"
 
-Place official UGC PDF documents into
 
-```
+Do not upload this file to GitHub because it contains sensitive information.
+
+
+
+5. Add UGC PDF Documents
+
+
+Add official UGC documents into:
+
+
 data/
+
     faculty_sections/
+
     zscore_reports/
+
     policy_notices/
-```
 
----
 
-## 6. Run the Application
 
-```bash
+6. Run Application
+
+
 streamlit run app.py
-```
 
-The application will open at
 
-```
+Application runs at:
+
+
 http://localhost:8501
-```
 
----
 
-# 🤖 Model Selection Comparison
 
-| Model | Purpose | Advantages | Reason Selected |
-|--------|----------|------------|----------------|
-| Llama 3.1 8B Instant (Groq) | Router Agent | Very fast inference, low latency | Ideal for lightweight classification tasks |
-| Claude Sonnet 4.5 | Answer Generation | Excellent reasoning, summarization, long-context understanding | Produces accurate and well-structured answers |
-| GPT-4o | Considered | Strong performance | Not selected due to API cost |
-| Gemini 2.5 | Considered | Good reasoning | Not selected because Claude performed better in document-based synthesis |
+Model Choice Comparison Table
 
-### Why Two Models?
 
-The application separates responsibilities:
+Model                         Purpose                    Reason Selected
 
-- Fast model → Routing
-- Powerful reasoning model → Answer generation
 
-This reduces latency while maintaining answer quality.
+Llama 3.1 8B Instant           Router Agent              Fast response time and low latency for classification tasks
 
----
 
-# 🔄 Agent Communication Diagram
+Claude Sonnet 4.5              Answer Generation         Strong reasoning and document understanding
 
-```
-                User Question
-                      │
-                      ▼
-            Router Agent (Groq)
-                      │
-         Determines Question Type
-                      │
-                      ▼
-             Retriever (ChromaDB)
-                      │
-         Retrieves Relevant Chunks
-                      │
-                      ▼
-      Retrieval + Synthesis Agent
-             (Claude Sonnet)
-                      │
-       Generates Evidence-Based Answer
-                      │
-                      ▼
-         Reflection Agent (Groq)
-                      │
-     Checks if answer matches context
-                      │
-                      ▼
-               Final Response
-```
 
----
+GPT-4o                         Alternative Model         Not selected because of API cost
 
-# 📚 RAG Pipeline
 
-The application follows a Retrieval-Augmented Generation (RAG) workflow.
+Gemini 2.5                     Alternative Model         Not selected because Claude provided better document synthesis
 
-## Step 1 — Document Loading
 
-Official UGC PDF documents are loaded using:
 
-- PyPDFLoader
+Model Selection Strategy
 
----
 
-## Step 2 — Chunking
+The application uses different models for different responsibilities.
 
-Documents are split into smaller sections using
 
-```
+Llama 3.1 8B Instant (Groq):
+
+- Performs question classification
+- Routes user queries
+- Provides fast response time
+
+
+Claude Sonnet 4.5:
+
+- Generates final answers
+- Uses retrieved document context
+- Provides detailed reasoning
+
+
+Using two models improves system efficiency by combining fast classification with high-quality answer generation.
+
+
+
+Agent Communication Diagram
+
+
+User Question
+
+       |
+
+       v
+
+Router Agent
+
+(Groq Llama 3.1)
+
+       |
+
+       v
+
+Question Category Detection
+
+       |
+
+       v
+
+Retriever
+
+(ChromaDB)
+
+       |
+
+       v
+
+Relevant Document Retrieval
+
+       |
+
+       v
+
+Retrieval and Synthesis Agent
+
+(Claude Sonnet 4.5)
+
+       |
+
+       v
+
+Answer Generation
+
+       |
+
+       v
+
+Reflection Agent
+
+(Groq)
+
+       |
+
+       v
+
+Final Validated Answer
+
+
+
+Agent Responsibilities
+
+
+Router Agent
+
+The router agent analyses user questions and classifies them into categories:
+
+- Z-score lookup questions
+- Eligibility questions
+- General admission questions
+
+
+Retrieval Agent
+
+The retrieval agent searches the ChromaDB vector database and retrieves relevant information from UGC documents.
+
+
+Synthesis Agent
+
+The synthesis agent receives retrieved information and generates answers using Claude Sonnet 4.5.
+
+
+Reflection Agent
+
+The reflection agent checks whether the generated answer is supported by retrieved document information.
+
+This reduces unsupported AI responses.
+
+
+
+RAG Pipeline Explanation
+
+
+Step 1: Document Loading
+
+
+Official UGC PDF documents are loaded using PyPDFLoader.
+
+
+
+Step 2: Document Chunking
+
+
+Documents are divided into smaller sections using:
+
 RecursiveCharacterTextSplitter
-```
 
-Parameters:
 
-```
+Configuration:
+
 Chunk Size = 300
 
 Chunk Overlap = 50
-```
 
-This improves semantic retrieval accuracy.
 
----
+Chunking improves retrieval accuracy by creating smaller searchable sections.
 
-## Step 3 — Embedding Generation
 
-Each chunk is converted into a vector using
 
-```
+Step 3: Embedding Generation
+
+
+Each document chunk is converted into vector embeddings using:
+
+
 sentence-transformers/all-MiniLM-L6-v2
-```
 
----
 
-## Step 4 — Vector Storage
 
-Embeddings are stored in
+Step 4: Vector Database Storage
 
-```
+
+The generated embeddings are stored in:
+
+
 ChromaDB
-```
 
-which enables efficient semantic similarity search.
 
----
+ChromaDB enables semantic similarity searching between user questions and document content.
 
-## Step 5 — Retrieval
+
+
+Step 5: Retrieval
+
 
 When a user submits a question:
 
-1. Router Agent classifies it.
-2. Chroma retrieves the six most relevant document chunks.
+1. Router Agent identifies the question type.
 
-```
+2. ChromaDB searches for relevant document chunks.
+
+3. The top matching documents are returned.
+
+
+Retrieval parameter:
+
+
 k = 6
-```
 
----
 
-## Step 6 — Answer Generation
 
-Claude Sonnet receives
+Step 6: Answer Generation
+
+
+Claude Sonnet 4.5 receives:
 
 - User question
-- Retrieved context
-- Category from Router Agent
+- Retrieved document context
+- Question category
 
-and generates an answer using only the retrieved information.
 
----
+The model generates an answer using only the retrieved information.
 
-## Step 7 — Reflection
 
-A second Groq model evaluates whether the generated answer is supported by the retrieved context.
+
+Step 7: Reflection Validation
+
+
+The reflection agent checks whether the answer is supported by the retrieved context.
+
 
 Possible outputs:
 
-```
+
 SUPPORTED
-```
+
 
 or
 
-```
+
 UNSUPPORTED
-```
+
 
 This helps reduce hallucinations.
 
----
 
-# 🖥 Features
 
-- Multi-Agent AI workflow
-- Retrieval-Augmented Generation (RAG)
-- Semantic document search
-- Source citation display
-- Reflection-based answer validation
-- Fast response using Groq
-- High-quality reasoning using Claude Sonnet
-- Streamlit web interface
+Feature Branch Development
 
----
 
-# 📸 Example Questions
+The project follows GitHub feature branch workflow.
 
-- Explain the district quota system.
-- What are the requirements for Engineering?
-- What is the Z-score for Medicine?
-- Can I apply for Agriculture with Bio Science?
-- Which subjects are required for Computer Science?
-- What is the admission process after A/L results?
 
----
+Feature branches used:
 
-# 🌐 Live Streamlit Demo
 
-Replace this link after deployment.
+feature/rag-pipeline
 
-```
-https://your-app-name.streamlit.app
-```
+Purpose:
 
----
+- PDF loading
+- Text splitting
+- Embedding generation
+- ChromaDB retrieval
 
-# 📄 Data Sources
 
-The system uses official University Grants Commission publications including:
 
-- UGC Admission Handbook
-- Faculty Admission Requirements
-- Annual Z-score Reports
-- UGC Policy Notices
+feature/agent-orchestration
 
----
+Purpose:
 
-# ⚠ Known Limitations
+- Multi-agent workflow
+- Agent communication
+- Pipeline integration
 
-- Answers depend on the uploaded UGC documents.
-- Older PDF documents may contain outdated admission requirements.
-- The system does not replace official UGC advice.
-- Some questions may not be answered if relevant information is absent from the document collection.
-- OCR quality in scanned PDFs can affect retrieval accuracy.
-- Internet access is required for LLM API calls.
 
----
 
-# 🚀 Future Improvements
+feature/streamlit-ui
 
-- Add conversational memory
-- Support Sinhala and Tamil
-- PDF source highlighting
-- Voice input
+Purpose:
+
+- User interface development
+- User input handling
+- Result display
+
+
+
+feature/model-router
+
+Purpose:
+
+- LLM routing logic
+- Model selection strategy
+
+
+
+Pull Request Workflow
+
+
+Each feature branch is merged into the main branch through Pull Requests.
+
+
+Example Pull Request titles:
+
+
+feat: implement RAG pipeline
+
+feat: add agent orchestration
+
+feat: create Streamlit interface
+
+feat: implement model router
+
+
+
+Each Pull Request contains:
+
+- Feature description
+- Implementation details
+- Testing information
+
+
+
+Semantic Commit Messages
+
+
+The project follows semantic commit conventions.
+
+
+Examples:
+
+
+feat: add document retrieval pipeline
+
+feat: integrate Claude synthesis model
+
+feat: create router agent
+
+fix: handle missing PDF documents
+
+fix: improve answer validation
+
+docs: update README documentation
+
+refactor: improve agent structure
+
+test: test RAG responses
+
+
+
+Live Streamlit Demo
+
+
+The application is deployed using Streamlit Cloud.
+
+
+Live Demo:
+
+
+https://ugc-admission-explainer-4tgr4pyi4ixqopggyz2ujn.streamlit.app/
+
+
+Users can use the application to ask questions about:
+
+- University admission eligibility
+- Z-score requirements
+- District quota system
+- Faculty requirements
+- UGC admission policies
+
+
+
+Known Limitations
+
+
+- The system depends on the quality of uploaded UGC documents.
+- Outdated documents may contain old admission information.
+- The application cannot answer questions outside the available document collection.
+- Poor-quality scanned PDFs may reduce retrieval accuracy.
+- Internet access is required for LLM API communication.
+- The system does not replace official UGC admission decisions.
+
+
+
+GitHub Project Management
+
+
+Development progress is managed using:
+
+- Feature branches
+- Pull Requests
+- Semantic commits
+- GitHub Issues or Project Boards
+
+
+
+Future Improvements
+
+
+- Sinhala and Tamil language support
+- Conversational memory
 - Automatic yearly UGC document updates
-- Hybrid keyword + semantic search
-- Better citation formatting
-- Admin interface for document uploads
+- Voice-based interaction
+- Better source citation display
+- Hybrid keyword and semantic search
+- Administrator document upload system
 
----
 
-# 👩‍💻 Author
 
-**Name:** Your Name
+Author
 
-BSc Software Engineering
 
-Agentic AI Assignment
+Name: Your Name
 
-2026
+Degree: BSc Software Engineering
 
----
+Project: Agentic AI Assignment
 
-# 📜 License
+Year: 2026
 
-This project is developed for educational purposes as part of a university coursework assignment.
+
+
+License
+
+
+This project was developed for educational purposes as part of a university coursework assignment.
