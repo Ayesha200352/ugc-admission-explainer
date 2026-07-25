@@ -35,11 +35,24 @@ def build_retriever():
 
     all_docs = []
     for folder in data_folders:
+        if not os.path.exists(folder):
+            continue
         for filename in os.listdir(folder):
             if filename.endswith(".pdf"):
                 path = os.path.join(folder, filename)
                 loader = PyPDFLoader(path)
-                all_docs.extend(loader.load())
+                docs = loader.load()
+
+                # Filter out pages where page_content is None, empty, or non-string
+                valid_docs = [
+                    doc for doc in docs
+                    if doc.page_content and isinstance(doc.page_content, str) and doc.page_content.strip()
+                ]
+                all_docs.extend(valid_docs)
+
+    if not all_docs:
+        st.error("No valid text found in PDF documents! Please ensure PDFs contain readable text and are placed in the data/ folder.")
+        st.stop()
 
     splitter = RecursiveCharacterTextSplitter(chunk_size=300, chunk_overlap=50)
     chunks = splitter.split_documents(all_docs)
