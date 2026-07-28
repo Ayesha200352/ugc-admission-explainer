@@ -31,24 +31,25 @@ The system uses Retrieval-Augmented Generation (RAG) with multiple AI agents to 
 
  Architecture Diagram
 
-```mermaid
+mermaid
 sequenceDiagram
     participant U as User
-    participant R as Router Agent
-    participant V as Retriever
-    participant S as Synthesis Agent
-    participant F as Reflection Agent
- 
-    U->>R: Ask question
-    R->>R: Classify category
-    R->>V: Query with category
-    V->>V: Search top-6 chunks
-    V->>S: Return chunks
-    S->>S: Draft answer
-    S->>F: Draft plus context
-    F->>F: Check grounding
-    F->>U: Final response
-    Note over F,U: Labeled SUPPORTED or UNSUPPORTED
+    participant R as Router Agent (Groq)
+    participant T as Retriever Tool (ChromaDB)
+    participant S as Synthesis Agent (OpenRouter)
+    participant F as Reflection Agent (Groq)
+
+    U->>R: question (string)
+    R->>R: classify category
+    R-->>T: {"query": "...", "category": "eligibility_question"}
+    T->>T: similarity search (k=6)
+    T-->>S: retrieved chunks + sources
+    S->>S: generate grounded answer
+    S-->>F: {"answer": "...", "context": "...", "sources": [...]}
+    F->>F: check answer vs context
+    F-->>U: {"reflection_check": "SUPPORTED"} + final answer
+
+
 ```
  Technology Stack
 
@@ -133,7 +134,7 @@ The pipeline deliberately pairs two distinct AI models to optimize efficiency, l
 
 Agent Communication Flow
 
-mermaid
+```mermaid
 sequenceDiagram
     participant U as User
     participant R as Router Agent (Groq)
@@ -150,6 +151,7 @@ sequenceDiagram
     S-->>F: {"answer": "...", "context": "...", "sources": [...]}
     F->>F: check answer vs context
     F-->>U: {"reflection_check": "SUPPORTED"} + final answer
+```
 
 
 *Agent Responsibilities:
