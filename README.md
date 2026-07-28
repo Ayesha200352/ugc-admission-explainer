@@ -32,19 +32,24 @@ The system uses Retrieval-Augmented Generation (RAG) with multiple AI agents to 
  Architecture Diagram
 
 ```mermaid
-flowchart TD
-    A[User Question via Streamlit UI] --> B[Router Agent<br/>Groq Llama 3.1 8B]
-    B -->|"category: zscore_lookup /<br/>eligibility_question / general_faq"| C[Retriever Tool<br/>ChromaDB Vector Search, k=6]
-    C -->|Top-6 relevant chunks| D[Retrieval & Synthesis Agent<br/>Claude Sonnet 4.5 via OpenRouter]
-    D -->|Draft answer + context| E[Reflection Agent<br/>Groq Llama 3.1 8B]
-    E -->|SUPPORTED / UNSUPPORTED| F[Final Response<br/>displayed in Streamlit UI]
-
-    G[(UGC PDFs:<br/>Faculty Sections,<br/>Z-score Reports,<br/>Policy Notices)] --> H[PyPDFLoader]
-    H --> I[RecursiveCharacterTextSplitter<br/>chunk_size=300, overlap=50]
-    I --> J[HuggingFace Embeddings<br/>all-MiniLM-L6-v2]
-    J --> C
+sequenceDiagram
+    participant U as User
+    participant R as Router Agent
+    participant V as Retriever
+    participant S as Synthesis Agent
+    participant F as Reflection Agent
+ 
+    U->>R: Ask question
+    R->>R: Classify category
+    R->>V: Query with category
+    V->>V: Search top-6 chunks
+    V->>S: Return chunks
+    S->>S: Draft answer
+    S->>F: Draft plus context
+    F->>F: Check grounding
+    F->>U: Final response
+    Note over F,U: Labeled SUPPORTED or UNSUPPORTED
 ```
-
  Technology Stack
 
 - *Programming Language: Python 3.10+
