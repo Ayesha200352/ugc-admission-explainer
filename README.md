@@ -1,6 +1,6 @@
-Sri Lanka Uni Admission Guide
+# Sri Lanka Uni Admission Guide
 
- Project Description
+ # Project Description
 
 UGC Admission & Z-Score Eligibility Explainer is an Agentic AI application developed to help Sri Lankan G.C.E. Advanced Level students understand university admission eligibility requirements, Z-score cut-offs, district quota systems, and UGC admission policies.
 
@@ -19,7 +19,7 @@ The system uses Retrieval-Augmented Generation (RAG) with multiple AI agents to 
 - What is the minimum mark required in the Common General Paper?
 - Which universities offer a given degree programme?
 
- System Architecture Workflow
+ # System Architecture Workflow
 
 1. User submits a query through the Streamlit Web Interface.
 2. Router Agent (Groq Llama 3.1 8B Instant) classifies the question category.
@@ -29,7 +29,7 @@ The system uses Retrieval-Augmented Generation (RAG) with multiple AI agents to 
 6. Reflection Agent (Groq Llama 3.1 8B Instant) validates the generated response against source context.
 7. Final validated response is displayed to the user.
 
- Architecture Diagram
+ # Architecture Diagram
 
 ```mermaid
 flowchart TD
@@ -45,7 +45,7 @@ flowchart TD
     J --> C
 ```
 
- Technology Stack
+ # Technology Stack
 
 - *Programming Language: Python 3.10+
 - *Frontend Framework: Streamlit
@@ -57,7 +57,7 @@ flowchart TD
 - *PDF Processing: PyPDFLoader
 - *Text Chunking: RecursiveCharacterTextSplitter
 
- Project Structure
+# Project Structure
 
 ```
 ugc-admission-explainer
@@ -78,7 +78,7 @@ ugc-admission-explainer
     |-- secrets.toml   (not committed — see .gitignore)
 ```
 
- Setup & Installation Instructions
+# Setup & Installation Instructions
 
 1. Clone Repository:
 ```
@@ -109,7 +109,7 @@ OPENROUTER_API_KEY="YOUR_OPENROUTER_API_KEY"
 streamlit run app.py
 Access the application at http://localhost:8501
 
- Model Choice Comparison Table
+# Model Choice Comparison Table
 
 | Sub-task | Model (Provider) | Reason Selected | Trade-Offs & Alternatives |
 |---|---|---|---|
@@ -119,14 +119,14 @@ Access the application at http://localhost:8501
 
 *Note: the initial synthesis model choice, `anthropic/claude-3.5-sonnet`, was found to be deprecated on OpenRouter during testing (404 error) and was replaced with the current equivalent, `anthropic/claude-sonnet-4.5`.
 
- Model Selection Strategy
+ # Model Selection Strategy
 
 The pipeline deliberately pairs two distinct AI models to optimize efficiency, latency, and cost:
 
 1. Llama 3.1 8B Instant (Groq): Handles high-frequency, low-complexity tasks — classifying incoming questions (`zscore_lookup`, `eligibility_question`, `general_faq`) and running fast binary self-critique checks (`SUPPORTED` / `UNSUPPORTED`).
 2. Claude Sonnet 4.5 (OpenRouter): Handles context-heavy generation where accuracy is critical, synthesizing answers strictly from retrieved UGC document chunks.
 
-Agent Communication Flow
+# Agent Communication Flow
 ```mermaid
 sequenceDiagram
     participant U as User
@@ -153,7 +153,7 @@ sequenceDiagram
 - Retrieval & Synthesis Agent: retrieves relevant chunks from ChromaDB (tool-use pattern) and synthesizes an answer using only that context.
 - Reflection Agent: acts as an auditor, checking whether the synthesized answer is actually supported by the retrieved context (reflection/self-critique pattern).
 
- RAG Pipeline Explanation
+ # RAG Pipeline Explanation
 
 1. Document Loading:PDF files are extracted page-by-page using LangChain's `PyPDFLoader`, from pre-extracted faculty sections, Z-score reports, and policy notices (extracted from the full UGC handbooks using `split_handbook.py` to avoid duplicating content already present in the full handbooks).
 2. Chunking Strategy: Text is chunked using `RecursiveCharacterTextSplitter` (`chunk_size=300`, `chunk_overlap=50`). This size was chosen after comparing 300/600/1000-character configurations — smaller chunks kept individual course-eligibility entries intact, while the 1000-character configuration was observed to merge unrelated course entries into a single chunk.
@@ -161,9 +161,7 @@ sequenceDiagram
 4. Vector Store: Embeddings are indexed in ChromaDB for similarity search.
 5. Retrieval: Top 6 (`k=6`) semantic matches are fetched per query. `k` was increased from an initial value of 3 to 6 after testing showed that table-formatted Z-score data was sometimes fragmented across more than 3 chunks.
 
-
-
-Retrieval Evaluation
+# Retrieval Evaluation
 
 Five test queries were run against the deployed pipeline, and the resulting agent behaviour (router category, retrieved sources, and reflection check) was recorded:
 
@@ -177,7 +175,7 @@ Five test queries were run against the deployed pipeline, and the resulting agen
 
 *Observation: 4 of 5 queries (80%) were retrieved and answered correctly and confirmed as context-supported. The one failure case (Query 1) demonstrates the practical value of the reflection pattern: rather than the retrieval failure silently producing a wrong answer, the self-critique step caught the mismatch between the answer and its supporting context and flagged it — this was subsequently one motivation for increasing `k` from 3 to 6.
 
- Feature Branch Workflow & Git Practice
+ # Feature Branch Workflow & Git Practice
 
 Development began on a single feature branch, `feature/rag-pipeline`, with 6 incremental, semantically-tagged commits covering corpus preparation, RAG pipeline construction, agent orchestration, and the Streamlit UI. This branch was merged into `main` via Pull Request #1.
 
@@ -193,18 +191,18 @@ Subsequent documentation corrections and diagram additions were made on a separa
 
 All commits use semantic prefixes (`feat:`, `docs:`) and represent genuine incremental progress rather than a single bulk upload.
 
- Live Streamlit Demo
+ # Live Streamlit Demo
 
 *Live Application URL: https://ugc-admission-explainer-zddzrkf9bnjqk4qvb5eusa.streamlit.app/
 
- Known Limitations
+# Known Limitations
 
 - Scanned Image PDFs: PDFs consisting purely of scanned images without OCR text cannot be read by PyPDFLoader and would require pre-processing (not encountered in this corpus, since all source PDFs contain a text layer).
 - Complex Tables: Multi-column statistical tables in Z-score reports can occasionally lose alignment during plain-text extraction and character-based chunking, which can fragment a district/course-specific value away from its retrievable context (see Retrieval Evaluation, Query 1 and 2).
 - Vector Store Persistence: The ChromaDB vector store is rebuilt on each cold start of the Streamlit app rather than persisting between deployments, since Streamlit Community Cloud does not guarantee persistent disk storage between restarts.
 - Strict Scope Boundary: The assistant is restricted to the provided UGC documents and will decline to answer out-of-scope general knowledge questions.
 
- Future Improvements
+# Future Improvements
 
 - Add multilingual query support for Sinhala and Tamil.
 - Implement hybrid search (BM25 keyword search + dense vector search) to improve retrieval of tabular Z-score data.
