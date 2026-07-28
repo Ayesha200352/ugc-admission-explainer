@@ -11,8 +11,8 @@ from langchain_openai import ChatOpenAI
 # ============================================
 # Page config
 # ============================================
-st.set_page_config(page_title="UGC Admission & Z-Score Explainer", page_icon="🎓")
-st.title("🎓 UGC Admission & Z-Score Eligibility Explainer")
+st.set_page_config(page_title="Sri Lanka Uni Admission Guide", page_icon="🎓")
+st.title("🎓 Sri Lanka Uni Admission Guide")
 st.caption("Ask about Sri Lankan university admission eligibility, Z-score cutoffs, and district quotas.")
 
 # ============================================

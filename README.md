@@ -1,4 +1,4 @@
-UGC Admission & Z-Score Eligibility Explainer
+Sri Lanka Uni Admission Guide
 
  Project Description
 
@@ -160,7 +160,7 @@ sequenceDiagram
 4. Vector Store: Embeddings are indexed in ChromaDB for similarity search.
 5. Retrieval: Top 6 (`k=6`) semantic matches are fetched per query. `k` was increased from an initial value of 3 to 6 after testing showed that table-formatted Z-score data was sometimes fragmented across more than 3 chunks.
 
-*Data Validation: `check_pdf.py` is a utility script used during development to verify that all extracted PDF pages loaded correctly (no empty/blank pages, no loader errors) before building the RAG pipeline.
+
 
 Retrieval Evaluation
 
