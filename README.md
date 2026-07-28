@@ -31,26 +31,20 @@ The system uses Retrieval-Augmented Generation (RAG) with multiple AI agents to 
 
  Architecture Diagram
 
-mermaid
-sequenceDiagram
-    participant U as User
-    participant R as Router Agent (Groq)
-    participant T as Retriever Tool (ChromaDB)
-    participant S as Synthesis Agent (OpenRouter)
-    participant F as Reflection Agent (Groq)
+```mermaid
+flowchart TD
+    A[User Question via Streamlit UI] --> B[Router Agent<br/>Groq Llama 3.1 8B]
+    B -->|"category: zscore_lookup /<br/>eligibility_question / general_faq"| C[Retriever Tool<br/>ChromaDB Vector Search, k=6]
+    C -->|Top-6 relevant chunks| D[Retrieval & Synthesis Agent<br/>Claude Sonnet 4.5 via OpenRouter]
+    D -->|Draft answer + context| E[Reflection Agent<br/>Groq Llama 3.1 8B]
+    E -->|SUPPORTED / UNSUPPORTED| F[Final Response<br/>displayed in Streamlit UI]
 
-    U->>R: question (string)
-    R->>R: classify category
-    R-->>T: {"query": "...", "category": "eligibility_question"}
-    T->>T: similarity search (k=6)
-    T-->>S: retrieved chunks + sources
-    S->>S: generate grounded answer
-    S-->>F: {"answer": "...", "context": "...", "sources": [...]}
-    F->>F: check answer vs context
-    F-->>U: {"reflection_check": "SUPPORTED"} + final answer
-
-
+    G[(UGC PDFs:<br/>Faculty Sections,<br/>Z-score Reports,<br/>Policy Notices)] --> H[PyPDFLoader]
+    H --> I[RecursiveCharacterTextSplitter<br/>chunk_size=300, overlap=50]
+    I --> J[HuggingFace Embeddings<br/>all-MiniLM-L6-v2]
+    J --> C
 ```
+
  Technology Stack
 
 - *Programming Language: Python 3.10+
@@ -133,24 +127,24 @@ The pipeline deliberately pairs two distinct AI models to optimize efficiency, l
 2. Claude Sonnet 4.5 (OpenRouter): Handles context-heavy generation where accuracy is critical, synthesizing answers strictly from retrieved UGC document chunks.
 
 Agent Communication Flow
-
 ```mermaid
 sequenceDiagram
     participant U as User
-    participant R as Router Agent (Groq)
-    participant T as Retriever Tool (ChromaDB)
-    participant S as Synthesis Agent (OpenRouter)
-    participant F as Reflection Agent (Groq)
-
-    U->>R: question (string)
-    R->>R: classify category
-    R-->>T: {"query": "...", "category": "eligibility_question"}
-    T->>T: similarity search (k=6)
-    T-->>S: retrieved chunks + sources
-    S->>S: generate grounded answer
-    S-->>F: {"answer": "...", "context": "...", "sources": [...]}
-    F->>F: check answer vs context
-    F-->>U: {"reflection_check": "SUPPORTED"} + final answer
+    participant R as Router Agent
+    participant V as Retriever
+    participant S as Synthesis Agent
+    participant F as Reflection Agent
+ 
+    U->>R: Ask question
+    R->>R: Classify category
+    R->>V: Query with category
+    V->>V: Search top-6 chunks
+    V->>S: Return chunks
+    S->>S: Draft answer
+    S->>F: Draft plus context
+    F->>F: Check grounding
+    F->>U: Final response
+    Note over F,U: Labeled SUPPORTED or UNSUPPORTED
 ```
 
 
